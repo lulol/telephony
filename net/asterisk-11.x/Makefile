@@ -177,6 +177,14 @@ define Package/asterisk11-sounds/install
 	rm -f $(1)/usr/lib/asterisk/sounds/conf-*
 endef
 
+ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk11-chan-mobile),)
+  CONFIGURE_ARGS+= \
+        --with-bluetooth
+else
+  CONFIGURE_ARGS+= \
+        --without-bluetooth
+endif
+
 ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk11-chan-dahdi),)
   CONFIGURE_ARGS+= \
 	--with-dahdi="$(STAGING_DIR)/usr" \
@@ -248,7 +256,6 @@ CONFIGURE_ARGS+= \
 	--build=$(GNU_HOST_NAME) \
 	--host=$(GNU_TARGET_NAME) \
 	--target=$(GNU_TARGET_NAME) \
-	--without-bluetooth \
 	--without-cap \
 	--without-curses \
 	--with-gsm=internal \
@@ -392,6 +399,7 @@ $(eval $(call BuildAsterisk11Module,cdr,Provides CDR,Call Detail Record,,/etc/as
 $(eval $(call BuildAsterisk11Module,chan-alsa,ALSA channel,the channel chan_alsa,+alsa-lib,/etc/asterisk/alsa.conf,alsa.conf,chan_alsa,,))
 $(eval $(call BuildAsterisk11Module,chan-agent,Agents proxy channel,an implementation of agents proxy channel,,,,chan_agent,))
 $(eval $(call BuildAsterisk11Module,chan-dahdi,DAHDI channel,DAHDI channel support,+dahdi-tools-libtonezone +kmod-dahdi +libpri,/etc/asterisk/chan_dahdi.conf,chan_dahdi.conf,chan_dahdi,))
+$(eval $(call BuildAsterisk11Module,chan-mobile,Bluetooth Mobile Device channel driver,Bluetooth Mobile Device channel support,+bluez-libs,/etc/asterisk/chan_mobile.conf,chan_mobile.conf,chan_mobile,))
 $(eval $(call BuildAsterisk11Module,chan-iax2,IAX2 channel,IAX support,+asterisk11-res-timing-timerfd,/etc/asterisk/iax.conf /etc/asterisk/iaxprov.conf,iax.conf iaxprov.conf,chan_iax2,))
 $(eval $(call BuildAsterisk11Module,chan-mgcp,MGCP channel,the channel chan_mgcp,,/etc/asterisk/mgcp.conf,mgcp.conf,chan_mgcp,))
 $(eval $(call BuildAsterisk11Module,chan-motif,Jingle channel,Motif Jingle Channel Driver,+asterisk11-res-xmpp,/etc/asterisk/motif.conf /etc/asterisk/jingle.conf,motif.conf jingle.conf,chan_motif,))
@@ -448,7 +456,8 @@ $(eval $(call BuildAsterisk11Module,pbx-realtime,Realtime Switch,realtime switch
 $(eval $(call BuildAsterisk11Module,pgsql,PostgreSQL,PostgreSQL support,+libpq,/etc/asterisk/cel_pgsql.conf /etc/asterisk/cdr_pgsql.conf /etc/asterisk/res_pgsql.conf,cel_pgsql.conf cdr_pgsql.conf res_pgsql.conf,cel_pgsql cdr_pgsql res_config_pgsql,))
 $(eval $(call BuildAsterisk11Module,res-adsi,Provide ADSI,Analog Display Services Interface capability,,,,res_adsi,))
 $(eval $(call BuildAsterisk11Module,res-ael-share,Shareable AEL code,support for shareable AEL code mainly between internal and external modules,,,,res_ael_share,))
-$(eval $(call BuildAsterisk11Module,res-agi,Asterisk Gateway Interface,Support for the Asterisk Gateway Interface extension,,,,res_agi,))
+$(eval $(call BuildAsterisk11Module,res-agi,Asterisk Gateway Interface,Support for the Asterisk Gateway Interface extension,+asterisk11-res-speech,,,res_agi,))
+$(eval $(call BuildAsterisk11Module,res-speech,Asterisk Generic Speech Recognizer API,Support for the Asterisk Speech Recognizer Interface extension,,,,res_speech,))
 $(eval $(call BuildAsterisk11Module,res-calendar,Calendaring API,Calendaring support (ICal and Google Calendar),,/etc/asterisk/calendar.conf,calendar.conf,res_calendar,,))
 $(eval $(call BuildAsterisk11Module,res-clioriginate,Calls via CLI,Originate calls via the CLI,,,,res_clioriginate,))
 $(eval $(call BuildAsterisk11Module,res-monitor,Provide Monitor,Cryptographic Signature capability,,,,res_monitor,))
