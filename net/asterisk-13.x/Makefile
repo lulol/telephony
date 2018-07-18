@@ -184,6 +184,15 @@ else
 	--without-tonezone
 endif
 
+ifneq ($(SDK)$(CONFIG_PACKAGE_asterisk13-chan-mobile),)
+  CONFIGURE_ARGS+= \
+        --with-bluetooth
+else
+  CONFIGURE_ARGS+= \
+        --without-bluetooth
+endif
+
+
 # Pass CPPFLAGS in the CFLAGS as otherwise the build system will
 # ignore them.
 TARGET_CFLAGS+=$(TARGET_CPPFLAGS)
@@ -192,7 +201,6 @@ CONFIGURE_ARGS+= \
 	--disable-xmldoc \
 	$(if $(CONFIG_PACKAGE_$(PKG_NAME)-chan-alsa),--with-asound="$(STAGING_DIR)/usr",--without-asound) \
 	--without-execinfo \
-	--without-bluetooth \
 	--without-cap \
 	$(if $(CONFIG_PACKAGE_$(PKG_NAME)-curl),--with-libcurl="$(STAGING_DIR)/usr",--without-curl) \
 	--without-curses \
@@ -362,6 +370,7 @@ $(eval $(call BuildAsterisk13Module,cdr-csv,Provides CDR CSV,Call Detail Record 
 $(eval $(call BuildAsterisk13Module,cdr-sqlite3,Provides CDR SQLITE3,Call Detail Record with SQLITE3 support,libsqlite3,,cdr_sqlite3_custom,,))
 $(eval $(call BuildAsterisk13Module,chan-alsa,ALSA channel,the channel chan_alsa,+alsa-lib,alsa.conf,chan_alsa,,))
 $(eval $(call BuildAsterisk13Module,chan-dahdi,DAHDI channel,DAHDI channel support,+dahdi-tools-libtonezone +kmod-dahdi +libpri @!aarch64,chan_dahdi.conf,chan_dahdi,,))
+$(eval $(call BuildAsterisk13Module,chan-mobile,Bluetooth Mobile Device channel driver,Bluetooth Mobile Device channel support,+bluez-libs,chan_mobile.conf,chan_mobile,,))
 $(eval $(call BuildAsterisk13Module,chan-iax2,IAX2 channel,IAX support,+asterisk13-res-timing-timerfd,iax.conf iaxprov.conf,chan_iax2,,))
 $(eval $(call BuildAsterisk13Module,chan-oss,OSS channel,the channel chan_oss,,oss.conf,chan_oss,,))
 $(eval $(call BuildAsterisk13Module,chan-sip,SIP channel,the channel chan_sip,+asterisk13-app-confbridge,sip.conf sip_notify.conf,chan_sip,,))
